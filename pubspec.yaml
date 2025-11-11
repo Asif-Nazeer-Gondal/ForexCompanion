@@ -5,34 +5,63 @@ publish_to: 'none' # Prevent accidental publishing
 version: 1.0.0+1
 
 environment:
-  sdk: ">=3.9.2 <4.0.0"
+  sdk: ">=3.4.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.8
-  google_fonts: ^6.3.2
-  flutter_riverpod: ^3.0.3
-  go_router: ^16.3.0
-  flutter_native_splash: ^2.4.7
-  http: ^1.5.0
+
+  # Core Flutter packages
+  go_router: ^17.0.0
+  http: ^1.2.1
   fl_chart: ^1.1.1
   intl: ^0.20.2
+  google_fonts: ^6.2.1
+  cupertino_icons: ^1.0.8
+  flutter_native_splash: ^2.4.0
+  path_provider: ^2.1.5
+  speech_to_text: ^7.3.0
+  firebase_core: ^4.2.1
+  cloud_firestore: ^6.1.0
 
-  forexcompanion: any
+  # --- State Management & Code Generation (SYNCHRONIZED TO V3.0.3) ---
+  flutter_riverpod: ^2.5.1      # Core Riverpod (compatible with V3 annotation/generator)
+  riverpod_annotation: ^3.0.3  # MUST MATCH generator version
+
+  # --- Database (Drift) ---
+  drift: ^2.29.0
+  sqlite3_flutter_libs: ^0.5.40
+
+  # --- Markdown Replacement (Corrected version constraint) ---
+  flutter_markdown_plus: ^1.0.5 # Using a stable, current version
+
+  # --- Structured Data/JSON ---
+  json_annotation: ^4.8.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+
+  # --- Code Generators (REQUIRED for Riverpod, Drift, and JSON) ---
+  build_runner: ^2.4.6          # Updated build tool
+
+  # The Riverpod generator MUST MATCH annotation version
+  riverpod_generator: ^3.0.3
+
+  # Database generator
+  drift_dev: ^2.29.0
+
+  # JSON generator
+  json_serializable: ^6.7.1
 
 flutter:
   uses-material-design: true
 
   assets:
     - assets/images/
+    - assets/fonts/
 
-  # Remove this if you’re using GoogleFonts instead
-  # But if you still want local fallback fonts, you can keep it
   fonts:
     - family: Poppins
       fonts:
