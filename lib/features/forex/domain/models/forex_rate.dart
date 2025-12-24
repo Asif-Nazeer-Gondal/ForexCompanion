@@ -1,22 +1,21 @@
-// lib/features/forex/domain/models/forex_rate.dart (FIXED)
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class ForexRate {
-  final String currencyPair; // e.g., "USD/GBP"
-  final double rate;
-  final DateTime timestamp;
+part 'forex_rate.freezed.dart';
+part 'forex_rate.g.dart';
 
-  ForexRate({
-    required this.currencyPair,
-    required this.rate,
-    required this.timestamp,
-  });
+@freezed
+class ForexRate with _$ForexRate {
+  const factory ForexRate({
+    required String baseCurrency,
+    required String quoteCurrency,
+    required double rate,
+    required double bid,
+    required double ask,
+    required DateTime timestamp,
+    double? change,
+    double? changePercent,
+  }) = _ForexRate;
 
-  // 🌟 FIX: Add getters to safely extract base and target currencies
-  String get baseCurrency {
-    return currencyPair.split('/').first;
-  }
-
-  String get targetCurrency {
-    return currencyPair.split('/').last;
-  }
+  factory ForexRate.fromJson(Map<String, dynamic> json) =>
+      _$ForexRateFromJson(json);
 }

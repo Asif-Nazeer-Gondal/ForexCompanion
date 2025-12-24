@@ -1,29 +1,70 @@
 // lib/features/forex/forex_providers.dart
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/domain/use_cases/forex_access_use_case.dart'; // Import Core Contract
+import 'package:http/http.dart' as http;
+import 'package:connectivity_plus/connectivity_plus.dart';
+// CORRECT:
+import '../../core/network/network_info.dart';
 import 'data/forex_service.dart';
-// Note: Assuming a provider for the main Forex use case exists for the Forex screens.
+import 'domain/repositories/forex_repository.dart';
+import 'domain/repositories/forex_repository_impl.dart';
+import 'domain/models/forex_rate.dart';
 
-// --- 1. Data Layer Providers ---
+// Network Info Provider
+final networkInfoProvider = Provider<NetworkInfo>((ref) {
+  return NetworkInfoImpl(Connectivity());
+});
 
+// HTTP Client Provider
+final httpClientProvider = Provider<http.Client>((ref) {
+  return http.Client();
+});
+
+// Forex Service Provider
 final forexServiceProvider = Provider<ForexService>((ref) {
-  // In a real app, you would inject an HTTP client here if needed.
-  return ForexServiceImpl();
+  final client = ref.watch(httpClientProvider);
+  return ForexService(client: client);
 });
 
-// --- 2. Domain Layer Providers ---
-
-// The provider for the new Forex Access Use Case, which implements the Core contract.
-final forexAccessUseCaseProvider = Provider<ForexAccessUseCase>((ref) {
+// Forex Repository Provider
+final forexRepositoryProvider = Provider<ForexRepository>((ref) {
   final service = ref.watch(forexServiceProvider);
-  return ForexAccessUseCaseImpl(service);
+  final networkInfo = ref.watch(networkInfoProvider);
+
+  return ForexRepositoryImpl(
+    forexService: service,
+    networkInfo: networkInfo,
+  );
 });
 
-// NOTE: You must integrate the main Forex Use Case provider here for your Forex screens
-// if it is not already present.
-// Example:
-// final forexRateProvider = FutureProvider<List<ForexRate>>((ref) {
-//   // Implementation depends on other files you may have
-//   return ref.watch(forexAccessUseCaseProvider).getCurrentRates().then((summary) => summary.currentRates);
-// });
+// Forex Rates Provider (AsyncValue) - Auto-refreshing
+final forexRatesProvider = FutureProvider.autoDispose<List<ForexRate>>((ref) async {
+  final repository = ref.watch(forexRepositoryProvider);
+  final result = await repository.getForexRates();
+
+  return result.fold(
+        (failure) => throw Exception(failure.message),
+        (rates) => rates,
+  );
+});
+
+// Specific Rate Provider
+final specificRateProvider = FutureProvider.family<ForexRate, Map<String, String>>(
+      (ref, currencies) async {
+    final repository = ref.watch(forexRepositoryProvider);
+    final result = await repository.getSpecificRate(
+      fromCurrency: currencies['from']!,
+      toCurrency: currencies['to']!,
+    );
+
+    return result.fold(
+          (failure) => throw Exception(failure.message),
+          (rate) => rate,
+    );
+  },
+);
+
+// Network Status Provider (Stream)
+final networkStatusProvider = StreamProvider<bool>((ref) {
+  final networkInfo = ref.watch(networkInfoProvider);
+  return networkInfo.onConnectivityChanged;
+});

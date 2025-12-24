@@ -1,0 +1,27 @@
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+_$ForexRateImpl _$$ForexRateImplFromJson(Map<String, dynamic> json) =>
+    _$ForexRateImpl(
+      baseCurrency: json['baseCurrency'] as String,
+      quoteCurrency: json['quoteCurrency'] as String,
+      rate: (json['rate'] as num).toDouble(),
+      bid: (json['bid'] as num).toDouble(),
+      ask: (json['ask'] as num).toDouble(),
+      timestamp: DateTime.parse(json['timestamp'] as String),
+      change: (json['change'] as num?)?.toDouble(),
+      changePercent: (json['changePercent'] as num?)?.toDouble(),
+    );
+
+Map<String, dynamic> _$$ForexRateImplToJson(_$ForexRateImpl instance) =>
+    <String, dynamic>{
+      'baseCurrency': instance.baseCurrency,
+      'quoteCurrency': instance.quoteCurrency,
+      'rate': instance.rate,
+      'bid': instance.bid,
+      'ask': instance.ask,
+      'timestamp': instance.timestamp.toIso8601String(),
+      'change': instance.change,
+      'changePercent': instance.changePercent,
+    };

@@ -1,0 +1,1 @@
+{"valid_import":true,"imports":[{"uri":"package:fpdart/fpdart.dart","transitive":false},{"uri":"package:forex_companion/core/error/failures.dart","transitive":false},{"uri":"package:forex_companion/features/forex/domain/models/forex_rate.dart","transitive":false}],"elements":[]}

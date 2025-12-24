@@ -1,136 +1,65 @@
-import 'dart:convert';
-import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
+import '../../../../core/utils/app_logger.dart';
 
-// --- DTOs (Data Transfer Objects) for Gemini API Payload ---
-// NOTE: In a full Clean Architecture project, these might live in
-// lib/features/jarvis/data/models. We define them here for a self-contained file.
+class JarvisService {
+  final FirebaseFirestore _firestore;
+  GenerativeModel? _model;
+  ChatSession? _chat;
 
-/// Represents a single part of a content block (e.g., text, image data).
-class Part {
-  final String? text;
+  JarvisService({FirebaseFirestore? firestore})
+      : _firestore = firestore ?? FirebaseFirestore.instance;
 
-  Part({this.text});
-
-  Map<String, dynamic> toJson() => {'text': text};
-}
-
-/// Represents a single turn in the conversation, containing a role and parts.
-class Content {
-  final String role; // 'user' or 'model'
-  final List<Part> parts;
-
-  Content({required this.role, required this.parts});
-
-  Map<String, dynamic> toJson() => {
-    'role': role,
-    'parts': parts.map((p) => p.toJson()).toList(),
-  };
-
-  factory Content.fromJson(Map<String, dynamic> json) {
-    return Content(
-      role: json['role'] as String,
-      parts: (json['parts'] as List)
-          .map((p) => Part(text: p['text'] as String?))
-          .toList(),
-    );
-  }
-}
-
-/// Represents a simple Chat Message Model used by the application domain.
-class ChatMessage {
-  final String id;
-  final String role; // 'user' or 'model'
-  final String text;
-  final DateTime timestamp;
-
-  ChatMessage({
-    required this.id,
-    required this.role,
-    required this.text,
-    required this.timestamp,
-  });
-}
-
-// --- Service Contract and Implementation ---
-
-/// Abstract contract for the Jarvis Service.
-/// Defines the external contract the Repository/Use Case layer depends on.
-abstract class JarvisService {
-  /// Sends the full conversation history to the Gemini API and returns the AI's response text.
-  Future<String> generateResponse(List<Content> conversationHistory);
-}
-
-/// Implementation of the JarvisService that talks to the Gemini REST API.
-class JarvisServiceImpl implements JarvisService {
-  // Use a placeholder for the API key. In a real Flutter app, this key
-  // must be secured (e.g., via environment variables or a backend proxy).
-  static const String _apiKey = '';
-  static const String _model = 'gemini-2.5-flash';
-  static const String _baseUrl =
-      'https://generativelanguage.googleapis.com/v1beta/models/$_model:generateContent';
-
-  @override
-  Future<String> generateResponse(List<Content> conversationHistory) async {
-    // 1. Construct the API URL with the key
-    final Uri uri = Uri.parse('$_baseUrl?key=$_apiKey');
-
-    // 2. Build the request payload
-    final Map<String, dynamic> requestBody = {
-      // The 'contents' array sends the entire conversation history
-      'contents': conversationHistory.map((c) => c.toJson()).toList(),
-      'systemInstruction': {
-        'parts': [
-          {
-            'text':
-            'You are Jarvis, a helpful and professional financial assistant for a personal finance app. Provide concise, clear, and actionable advice related to forex, budgeting, and general finance. Keep your responses friendly and encouraging.'
-          }
-        ]
-      },
-      'config': {
-        'temperature': 0.7,
-      },
-    };
-
+  /// Initializes the Gemini model
+  Future<void> initialize() async {
     try {
-      if (kDebugMode) {
-        print('Sending Request: ${jsonEncode(requestBody)}');
-      }
+      // -----------------------------------------------------------
+      // YOUR API KEY
+      // I have placed your key here. For production, move this to
+      // Firestore or an ENV file to keep it secure.
+      // -----------------------------------------------------------
+      const String myApiKey = "AIzaSyBRrf3oC4E0p9SgjLJg78AFfdWtRgVyqvE";
 
-      // 3. Send the HTTP request
-      final response = await http.post(
-        uri,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(requestBody),
+      // 1. Initialize the Model
+      // We use 'gemini-1.5-pro' for the high-intelligence capabilities.
+      _model = GenerativeModel(
+        model: 'gemini-1.5-pro',
+        apiKey: myApiKey,
       );
 
-      // 4. Handle the response
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      // 2. Start a chat session (allows the AI to remember context)
+      _chat = _model!.startChat(history: [
+        Content.text('You are Jarvis, an expert Forex trading assistant. Be concise and helpful.'),
+      ]);
 
-        // Basic check for generated text
-        final candidates = jsonResponse['candidates'] as List?;
-        if (candidates != null && candidates.isNotEmpty) {
-          final parts = candidates[0]['content']['parts'] as List?;
-          if (parts != null && parts.isNotEmpty && parts[0]['text'] != null) {
-            return parts[0]['text'] as String;
-          }
+      AppLogger.i("Jarvis AI (Pro Model) initialized successfully.");
+    } catch (e) {
+      AppLogger.e("Failed to initialize Jarvis: $e");
+    }
+  }
+
+  /// Sends a message to Jarvis and streams the response back
+  Stream<String> sendMessage(String message) async* {
+    if (_model == null || _chat == null) {
+      yield "Jarvis is waking up... please wait a moment.";
+      await initialize();
+      // If it still fails, stop
+      if (_model == null) {
+        yield "System Error: Unable to connect to AI.";
+        return;
+      }
+    }
+
+    try {
+      final response = _chat!.sendMessageStream(Content.text(message));
+      await for (final chunk in response) {
+        if (chunk.text != null) {
+          yield chunk.text!;
         }
-
-        // If the model generates a candidate but no text (e.g., blocked content)
-        throw Exception('API call successful but no text generated by model.');
-      } else {
-        // Handle non-200 status codes (e.g., 400, 403, 500)
-        final errorBody = jsonDecode(response.body);
-        final errorMessage = errorBody['error']['message'] ?? 'Unknown API Error';
-        throw Exception('Failed to generate content: ${response.statusCode} - $errorMessage');
       }
     } catch (e) {
-      if (kDebugMode) {
-        print('Jarvis API Error: $e');
-      }
-      // Re-throw the exception to be caught by the Repository/Use Case layer
-      rethrow;
+      AppLogger.e("Error sending message to Jarvis: $e");
+      yield "I encountered an error processing that request.";
     }
   }
 }
