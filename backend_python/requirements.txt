@@ -1,0 +1,10 @@
+sqlalchemy
+alembic
+psycopg2-binary
+pytest
+pytest-cov
+passlib[bcrypt]
+python-jose
+fastapi
+uvicorn
+python-decouple
