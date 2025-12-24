@@ -1,11 +1,9 @@
 // lib/features/forex/domain/repositories/forex_repository_impl.dart
 import 'package:fpdart/fpdart.dart';
-import 'package:forex_companion/core/error/exceptions.dart';
-import 'package:fpdart/fpdart.dart';  // ✓ Keep this one
-import '../../../core/error/exceptions.dart';
-import '../../../core/error/failures.dart';
-import '../../../core/network/network_info.dart';
-import '../../../core/utils/app_logger.dart';
+import '../../../../core/error/exceptions.dart';
+import '../../../../core/error/failures.dart';
+import '../../../../core/network/network_info.dart';
+import '../../../../utils/app_logger.dart';
 import '../../data/forex_service.dart';
 import '../models/forex_rate.dart';
 import 'forex_repository.dart';

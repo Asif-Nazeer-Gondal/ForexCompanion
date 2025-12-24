@@ -8,14 +8,11 @@ class ForexRate with _$ForexRate {
   const factory ForexRate({
     required String baseCurrency,
     required String quoteCurrency,
-    required double rate,
-    required double bid,
-    required double ask,
+    double? bid,
+    double? ask,
+    double? rate,
     required DateTime timestamp,
-    double? change,
-    double? changePercent,
   }) = _ForexRate;
 
-  factory ForexRate.fromJson(Map<String, dynamic> json) =>
-      _$ForexRateFromJson(json);
+  factory ForexRate.fromJson(Map<String, dynamic> json) => _$ForexRateFromJson(json);
 }

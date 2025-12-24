@@ -12,40 +12,40 @@ class AppTextStyles {
   static TextStyle h1 = GoogleFonts.poppins(
     fontSize: 28,
     fontWeight: FontWeight.w700,
-    color: AppColors.textPrimary,
+    color: AppColors.lightTextPrimary,
     height: 1.2,
   );
 
   static TextStyle h2 = GoogleFonts.poppins(
     fontSize: 22,
     fontWeight: FontWeight.w600,
-    color: AppColors.textPrimary,
+    color: AppColors.lightTextPrimary,
     height: 1.25,
   );
 
   static TextStyle h3 = GoogleFonts.poppins(
     fontSize: 18,
     fontWeight: FontWeight.w600,
-    color: AppColors.textPrimary,
+    color: AppColors.lightTextPrimary,
   );
 
   // Body
   static TextStyle bodyLarge = GoogleFonts.poppins(
     fontSize: 16,
     fontWeight: FontWeight.w400,
-    color: AppColors.textPrimary,
+    color: AppColors.lightTextPrimary,
   );
 
   static TextStyle bodyMedium = GoogleFonts.poppins(
     fontSize: 14,
     fontWeight: FontWeight.w400,
-    color: AppColors.textSecondary,
+    color: AppColors.lightTextSecondary,
   );
 
   static TextStyle bodySmall = GoogleFonts.poppins(
     fontSize: 12,
     fontWeight: FontWeight.w400,
-    color: AppColors.textSecondary,
+    color: AppColors.lightTextSecondary,
   );
 
   // Buttons / Labels
@@ -60,6 +60,6 @@ class AppTextStyles {
   static TextStyle caption = GoogleFonts.poppins(
     fontSize: 11,
     fontWeight: FontWeight.w400,
-    color: AppColors.textSecondary,
+    color: AppColors.lightTextSecondary,
   );
 }

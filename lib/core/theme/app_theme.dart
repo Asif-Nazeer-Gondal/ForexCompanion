@@ -14,7 +14,7 @@ class AppTheme {
       brightness: Brightness.light,
 
       // Color Scheme
-      colorScheme: ColorScheme.light(
+      colorScheme: const ColorScheme.light(
         primary: AppColors.primaryNavy,
         secondary: AppColors.accentGold,
         tertiary: AppColors.successGreen,
@@ -28,7 +28,7 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.lightBackground,
 
       // App Bar
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         elevation: 0,
         centerTitle: false,
         backgroundColor: Colors.transparent,
@@ -42,7 +42,7 @@ class AppTheme {
       ),
 
       // Card
-        cardTheme: CardThemeData(
+        cardTheme: const CardThemeData(
           elevation: 2,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -50,7 +50,7 @@ class AppTheme {
         ),
 
       // Elevated Button
-      elevatedButtonTheme: ElevatedButtonThemeData(
+      elevatedButtonTheme: const ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primaryNavy,
           foregroundColor: Colors.white,
@@ -67,7 +67,7 @@ class AppTheme {
       ),
 
       // Text Button
-      textButtonTheme: TextButtonThemeData(
+      textButtonTheme: const TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: AppColors.primaryNavy,
           textStyle: const TextStyle(
@@ -78,7 +78,7 @@ class AppTheme {
       ),
 
       // Input Decoration
-      inputDecorationTheme: InputDecorationTheme(
+      inputDecorationTheme: const InputDecorationTheme(
         filled: true,
         fillColor: AppColors.cardLight,
         border: OutlineInputBorder(
@@ -109,7 +109,7 @@ class AppTheme {
       ),
 
       // Bottom Navigation Bar
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColors.cardLight,
         selectedItemColor: AppColors.primaryNavy,
         unselectedItemColor: AppColors.lightTextSecondary,
@@ -126,7 +126,7 @@ class AppTheme {
       ),
 
       // Chip
-      chipTheme: ChipThemeData(
+      chipTheme: const ChipThemeData(
         backgroundColor: AppColors.cardLight,
         selectedColor: AppColors.primaryNavy,
         labelStyle: const TextStyle(
@@ -161,7 +161,7 @@ class AppTheme {
       brightness: Brightness.dark,
 
       // Color Scheme
-      colorScheme: ColorScheme.dark(
+      colorScheme: const ColorScheme.dark(
         primary: AppColors.primaryNavy,
         secondary: AppColors.accentGold,
         tertiary: AppColors.successGreen,
@@ -175,7 +175,7 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.darkBackground,
 
       // App Bar
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         elevation: 0,
         centerTitle: false,
         backgroundColor: Colors.transparent,
@@ -189,7 +189,7 @@ class AppTheme {
       ),
 
       // Card
-      cardTheme: CardThemeData(
+      cardTheme: const CardThemeData(
         elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -197,7 +197,7 @@ class AppTheme {
       ),
 
       // Elevated Button
-      elevatedButtonTheme: ElevatedButtonThemeData(
+      elevatedButtonTheme: const ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.accentGold,
           foregroundColor: AppColors.darkBackground,
@@ -214,7 +214,7 @@ class AppTheme {
       ),
 
       // Text Button
-      textButtonTheme: TextButtonThemeData(
+      textButtonTheme: const TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: AppColors.accentGold,
           textStyle: const TextStyle(
@@ -225,7 +225,7 @@ class AppTheme {
       ),
 
       // Input Decoration
-      inputDecorationTheme: InputDecorationTheme(
+      inputDecorationTheme: const InputDecorationTheme(
         filled: true,
         fillColor: AppColors.cardDark,
         border: OutlineInputBorder(
@@ -256,7 +256,7 @@ class AppTheme {
       ),
 
       // Bottom Navigation Bar
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColors.cardDark,
         selectedItemColor: AppColors.accentGold,
         unselectedItemColor: AppColors.darkTextSecondary,
@@ -273,7 +273,7 @@ class AppTheme {
       ),
 
       // Chip
-      chipTheme: ChipThemeData(
+      chipTheme: const ChipThemeData(
         backgroundColor: AppColors.cardDark,
         selectedColor: AppColors.accentGold,
         labelStyle: const TextStyle(

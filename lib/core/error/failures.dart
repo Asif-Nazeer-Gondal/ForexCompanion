@@ -1,24 +1,31 @@
-abstract class Failure {
-  final String message;
-  const Failure(this.message);
+import 'package:equatable/equatable.dart';
+
+abstract class Failure extends Equatable {
+  const Failure([List properties = const <dynamic>[]]);
 }
 
 class ServerFailure extends Failure {
-  const ServerFailure(super.message);
+  final String? message;
+  const ServerFailure([this.message]);
+  @override
+  List<Object?> get props => [message];
 }
 
 class NetworkFailure extends Failure {
-  const NetworkFailure(super.message);
+  final String? message;
+  const NetworkFailure([this.message]);
+  @override
+  List<Object?> get props => [message];
 }
 
 class CacheFailure extends Failure {
-  const CacheFailure(super.message);
+  @override
+  List<Object?> get props => [];
 }
 
 class ForexApiFailure extends Failure {
-  const ForexApiFailure(super.message);
-}
-
-class UnknownFailure extends Failure {
-  const UnknownFailure(super.message);
+  final String? message;
+  const ForexApiFailure([this.message]);
+  @override
+  List<Object?> get props => [message];
 }

@@ -101,8 +101,8 @@ class ForexService {
 
         if (rates.containsKey(to)) {
           return ForexRate(
-            from: from,
-            to: to,
+            baseCurrency: from,
+            quoteCurrency: to,
             rate: (rates[to] as num).toDouble(),
             timestamp: DateTime.now(),
           );
@@ -135,8 +135,8 @@ class ForexService {
 
       return rates.entries.map((entry) {
         return ForexRate(
-          from: base,
-          to: entry.key,
+          baseCurrency: base,
+          quoteCurrency: entry.key,
           rate: (entry.value as num).toDouble(),
           timestamp: timestamp,
         );

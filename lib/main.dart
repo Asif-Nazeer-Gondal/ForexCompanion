@@ -76,7 +76,7 @@ class HomePage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(30),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.2),
+                        color: Colors.black.withOpacity(0.2),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),
@@ -106,7 +106,7 @@ class HomePage extends StatelessWidget {
                 Text(
                   'AI-Powered Forex Trading',
                   style: theme.textTheme.titleLarge?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.9),
+                    color: Colors.white.withOpacity(0.9),
                   ),
                 ),
 
@@ -143,7 +143,7 @@ class HomePage extends StatelessWidget {
                 Text(
                   'Version 1.0.0',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.7),
+                    color: Colors.white.withOpacity(0.7),
                   ),
                 ),
               ],
