@@ -32,9 +32,9 @@ class JarvisService {
         Content.text('You are Jarvis, an expert Forex trading assistant. Be concise and helpful.'),
       ]);
 
-      AppLogger.i("Jarvis AI (Pro Model) initialized successfully.");
+      AppLogger.info("Jarvis AI (Pro Model) initialized successfully.");
     } catch (e) {
-      AppLogger.e("Failed to initialize Jarvis: $e");
+      AppLogger.error("Failed to initialize Jarvis: $e");
     }
   }
 
@@ -58,7 +58,7 @@ class JarvisService {
         }
       }
     } catch (e) {
-      AppLogger.e("Error sending message to Jarvis: $e");
+      AppLogger.error("Error sending message to Jarvis: $e");
       yield "I encountered an error processing that request.";
     }
   }

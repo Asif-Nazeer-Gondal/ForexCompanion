@@ -43,6 +43,7 @@ dependencies:
 
   # AI Integration (Optional - for Jarvis feature)
   google_generative_ai: ^0.4.7
+  flutter_dotenv: ^5.0.0
 
   # Database
   drift: ^2.14.1
@@ -60,6 +61,7 @@ dependencies:
   # Icons
   cupertino_icons: ^1.0.6
   equatable: ^2.0.5
+  web_socket_channel: ^2.4.0
 
 dev_dependencies:
   flutter_test:

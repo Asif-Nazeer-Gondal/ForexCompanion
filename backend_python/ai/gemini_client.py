@@ -3,10 +3,11 @@
 # User needs to install 'google-generativeai' SDK: pip install google-generativeai
 import os
 import google.generativeai as genai
+from decouple import config
 
 class GeminiAIClient:
     def __init__(self):
-        gemini_api_key = os.environ.get("GEMINI_API_KEY", "AIzaSyBRrf3oC4E0p9SgjLJg78AFfdWtRgVyqvE") # Using provided key
+        gemini_api_key = config("GEMINI_API_KEY", default="AIzaSyBRrf3oC4E0p9SgjLJg78AFfdWtRgVyqvE") # Using provided key
         genai.configure(api_key=gemini_api_key)
         self.model = genai.GenerativeModel('gemini-pro')
         print("GeminiAIClient initialized.")

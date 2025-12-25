@@ -2,10 +2,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // Import flutter_dotenv
 import 'core/theme/app_theme.dart';
 
-void main() {
+Future<void> main() async { // Make main an async function
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Load environment variables from .env file
+  await dotenv.load(fileName: ".env");
+
+  // TODO: Access the Gemini API key here using dotenv.env['GEMINI_API_KEY']
+  // and pass it to the google_generative_ai initialization as needed.
 
   // Set system UI overlay style
   SystemChrome.setSystemUIOverlayStyle(

@@ -28,7 +28,7 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.lightBackground,
 
       // App Bar
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         elevation: 0,
         centerTitle: false,
         backgroundColor: Colors.transparent,
@@ -42,15 +42,8 @@ class AppTheme {
       ),
 
       // Card
-        cardTheme: const CardThemeData(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-
       // Elevated Button
-      elevatedButtonTheme: const ElevatedButtonThemeData(
+      elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primaryNavy,
           foregroundColor: Colors.white,
@@ -67,7 +60,7 @@ class AppTheme {
       ),
 
       // Text Button
-      textButtonTheme: const TextButtonThemeData(
+      textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: AppColors.primaryNavy,
           textStyle: const TextStyle(
@@ -78,7 +71,7 @@ class AppTheme {
       ),
 
       // Input Decoration
-      inputDecorationTheme: const InputDecorationTheme(
+      inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.cardLight,
         border: OutlineInputBorder(
@@ -101,15 +94,13 @@ class AppTheme {
       ),
 
       // Floating Action Button
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: AppColors.accentGold,
-        foregroundColor: Colors.white,
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
         elevation: 8,
-        shape: CircleBorder(),
+        shape: const CircleBorder(),
       ),
 
       // Bottom Navigation Bar
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: AppColors.cardLight,
         selectedItemColor: AppColors.primaryNavy,
         unselectedItemColor: AppColors.lightTextSecondary,
@@ -126,7 +117,7 @@ class AppTheme {
       ),
 
       // Chip
-      chipTheme: const ChipThemeData(
+      chipTheme: ChipThemeData(
         backgroundColor: AppColors.cardLight,
         selectedColor: AppColors.primaryNavy,
         labelStyle: const TextStyle(
@@ -140,7 +131,7 @@ class AppTheme {
       ),
 
       // Divider
-      dividerTheme: const DividerThemeData(
+      dividerTheme: DividerThemeData(
         color: AppColors.dividerLight,
         thickness: 1,
         space: 1,
@@ -151,8 +142,14 @@ class AppTheme {
         color: AppColors.lightTextSecondary,
         size: 24,
       ),
-    );
-  }
+
+      // Card
+      cardTheme: CardTheme( // This should be CardThemeData not CardTheme
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
 
   // Dark Theme
   static ThemeData get darkTheme {
@@ -175,7 +172,7 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.darkBackground,
 
       // App Bar
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         elevation: 0,
         centerTitle: false,
         backgroundColor: Colors.transparent,
@@ -189,7 +186,7 @@ class AppTheme {
       ),
 
       // Card
-      cardTheme: const CardThemeData(
+      cardTheme: CardTheme(
         elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -197,7 +194,7 @@ class AppTheme {
       ),
 
       // Elevated Button
-      elevatedButtonTheme: const ElevatedButtonThemeData(
+      elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.accentGold,
           foregroundColor: AppColors.darkBackground,
@@ -214,7 +211,7 @@ class AppTheme {
       ),
 
       // Text Button
-      textButtonTheme: const TextButtonThemeData(
+      textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: AppColors.accentGold,
           textStyle: const TextStyle(
@@ -225,7 +222,7 @@ class AppTheme {
       ),
 
       // Input Decoration
-      inputDecorationTheme: const InputDecorationTheme(
+      inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.cardDark,
         border: OutlineInputBorder(
@@ -248,15 +245,15 @@ class AppTheme {
       ),
 
       // Floating Action Button
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: AppColors.accentGold,
         foregroundColor: AppColors.darkBackground,
         elevation: 8,
-        shape: CircleBorder(),
+        shape: const CircleBorder(),
       ),
 
       // Bottom Navigation Bar
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: AppColors.cardDark,
         selectedItemColor: AppColors.accentGold,
         unselectedItemColor: AppColors.darkTextSecondary,
@@ -273,7 +270,7 @@ class AppTheme {
       ),
 
       // Chip
-      chipTheme: const ChipThemeData(
+      chipTheme: ChipThemeData(
         backgroundColor: AppColors.cardDark,
         selectedColor: AppColors.accentGold,
         labelStyle: const TextStyle(
@@ -287,14 +284,14 @@ class AppTheme {
       ),
 
       // Divider
-      dividerTheme: const DividerThemeData(
+      dividerTheme: DividerThemeData(
         color: AppColors.dividerDark,
         thickness: 1,
         space: 1,
       ),
 
       // Icon Theme
-      iconTheme: const IconThemeData(
+      iconTheme: IconThemeData(
         color: AppColors.darkTextSecondary,
         size: 24,
       ),

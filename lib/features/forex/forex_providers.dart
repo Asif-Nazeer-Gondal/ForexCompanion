@@ -10,7 +10,7 @@ import 'domain/repositories/forex_repository_impl.dart';
 
 // Network Info Provider
 final networkInfoProvider = Provider<NetworkInfo>((ref) {
-  return NetworkInfoImpl(Connectivity());
+  return NetworkInfoImpl(connectivity: Connectivity());
 });
 
 // HTTP Client Provider

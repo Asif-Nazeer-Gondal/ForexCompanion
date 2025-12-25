@@ -1,6 +1,6 @@
 // lib/features/forex/domain/repositories/forex_repository.dart
 import 'package:fpdart/fpdart.dart';
-import '../../../core/error/failures.dart';
+import 'package:forexcompanion/core/error/failures.dart';
 import '../models/forex_rate.dart';
 
 abstract class ForexRepository {

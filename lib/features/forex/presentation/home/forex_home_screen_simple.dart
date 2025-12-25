@@ -1,7 +1,7 @@
 // lib/features/forex/presentation/home/forex_home_screen_simple.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:forex_companion/features/forex/forex_providers.dart';
+import 'package:forexcompanion/features/forex/forex_providers.dart';
 
 class ForexHomeScreen extends ConsumerWidget {
   const ForexHomeScreen({super.key});

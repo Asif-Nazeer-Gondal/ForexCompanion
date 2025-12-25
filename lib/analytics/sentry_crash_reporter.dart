@@ -4,7 +4,6 @@
 class SentryCrashReporterService {
   // TODO: Implement Sentry crash reporting logic
   void reportError(dynamic error, StackTrace? stackTrace) {
-    print('Reporting error to Sentry: $error 
- $stackTrace');
+    print('Reporting error to Sentry: $error\nStack Trace: $stackTrace');
   }
 }

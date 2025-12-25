@@ -10,7 +10,7 @@ class ForexRate with _$ForexRate {
     required String quoteCurrency,
     double? bid,
     double? ask,
-    double? rate,
+    required double rate,
     required DateTime timestamp,
   }) = _ForexRate;
 

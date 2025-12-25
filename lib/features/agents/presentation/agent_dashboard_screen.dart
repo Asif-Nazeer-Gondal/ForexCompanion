@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:forexcompanion/state/providers/agent_provider.dart';
 
 class AgentDashboardScreen extends ConsumerWidget {
-  const AgentDashboardScreen({super: key});
+  const AgentDashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
