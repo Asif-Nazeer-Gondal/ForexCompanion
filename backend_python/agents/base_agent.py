@@ -1,51 +1,23 @@
-from sqlalchemy.orm import Session
-from backend_python.database.models.agent_state import AgentState
+# backend_python/agents/base_agent.py
+# This file defines the base class for all trading agents.
+from abc import ABC, abstractmethod
+from backend_python.ai.decision_engine import DecisionEngine
 
-class BaseAgent:
-    def __init__(self, user_id: int, agent_name: str, db_session: Session):
-        self.user_id = user_id
-        self.agent_name = agent_name
-        self.db_session = db_session
-        self.state = {}
-        self.load_state()
+class BaseAgent(ABC):
+    def __init__(self, agent_id: str, decision_engine: DecisionEngine):
+        self.agent_id = agent_id
+        self.decision_engine = decision_engine
+        self.is_active = False
+        self.agent_profile = {"risk_tolerance": "medium"} # Example profile
 
-    def load_state(self):
-        """Loads the agent's state from the database."""
-        agent_state = self.db_session.query(AgentState).filter_by(
-            user_id=self.user_id,
-            agent_name=self.agent_name
-        ).first()
-        if agent_state:
-            self.state = agent_state.state
-            print(f"Agent '{self.agent_name}' loaded state: {self.state}")
-        else:
-            print(f"No state found for agent '{self.agent_name}'. Initializing with empty state.")
-            self.state = {"initialized": True}
-            self.save_state()
+    @abstractmethod
+    async def make_decision(self, market_data: dict) -> dict:
+        pass
 
-    def save_state(self):
-        """Saves the agent's state to the database."""
-        agent_state = self.db_session.query(AgentState).filter_by(
-            user_id=self.user_id,
-            agent_name=self.agent_name
-        ).first()
-        if agent_state:
-            agent_state.state = self.state
-        else:
-            agent_state = AgentState(
-                user_id=self.user_id,
-                agent_name=self.agent_name,
-                state=self.state
-            )
-            self.db_session.add(agent_state)
-        
-        self.db_session.commit()
-        print(f"Agent '{self.agent_name}' saved state: {self.state}")
+    def start(self):
+        self.is_active = True
+        print(f"Agent {self.agent_id} started.")
 
-    def run(self):
-        """A simple run method to demonstrate agent logic."""
-        print(f"Agent '{self.agent_name}' is running with state: {self.state}")
-        # Example logic: increment a counter in the state
-        count = self.state.get("run_count", 0) + 1
-        self.state["run_count"] = count
-        self.save_state()
+    def stop(self):
+        self.is_active = False
+        print(f"Agent {self.agent_id} stopped.")
