@@ -1,60 +1,111 @@
 // lib/state/providers/forex_provider.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:forexcompanion/core/network/network_info.dart'; // Assuming this exists
+import 'package:http/http.dart' as http;
+import '../../features/forex/data/forex_service.dart';
+import '../../features/forex/domain/models/forex_rate.dart';
 
-class ForexData {
-  final String symbol;
-  final double price;
-  final DateTime timestamp;
-
-  ForexData({required this.symbol, required this.price, required this.timestamp});
-}
-
-class ForexNotifier extends StateNotifier<AsyncValue<List<ForexData>>> {
-  final NetworkInfo _networkInfo;
-
-  ForexNotifier(this._networkInfo) : super(const AsyncValue.loading()) {
-    _fetchForexData();
-  }
-
-  Future<void> _fetchForexData() async {
-    state = const AsyncValue.loading();
-    try {
-      if (await _networkInfo.isConnected) {
-        // Simulate fetching data from API
-        await Future.delayed(const Duration(seconds: 2));
-        final data = [
-          ForexData(symbol: 'EURUSD', price: 1.0850, timestamp: DateTime.now()),
-          ForexData(symbol: 'GBPUSD', price: 1.2710, timestamp: DateTime.now()),
-        ];
-        state = AsyncValue.data(data);
-      } else {
-        state = AsyncValue.error('No internet connection', StackTrace.current);
-      }
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
-    }
-  }
-
-  // Method to simulate real-time updates (e.g., from WebSocket)
-  void updateForexData(ForexData newData) {
-    if (state.hasValue) {
-      final currentData = state.value!;
-      final existingIndex = currentData.indexWhere((f) => f.symbol == newData.symbol);
-      if (existingIndex != -1) {
-        currentData[existingIndex] = newData;
-      } else {
-        currentData.add(newData);
-      }
-      state = AsyncValue.data([...currentData]); // Create new list to trigger rebuild
-    }
-  }
-}
-
-final forexProvider = StateNotifierProvider<ForexNotifier, AsyncValue<List<ForexData>>>((ref) {
-  final networkInfo = ref.read(networkInfoProvider); // Assuming networkInfoProvider exists
-  return ForexNotifier(networkInfo);
+// Provider for ForexService
+final forexServiceProvider = Provider<ForexService>((ref) {
+  return ForexService(client: http.Client());
 });
 
-// Assuming a networkInfoProvider exists in core/network/network_info.dart
-final networkInfoProvider = Provider<NetworkInfo>((ref) => NetworkInfoImpl());
+// State class for the chart
+class ForexChartState {
+  final String symbol;
+  final String timeframe;
+  final AsyncValue<List<ForexRate>> rates;
+
+  ForexChartState({
+    required this.symbol,
+    required this.timeframe,
+    required this.rates,
+  });
+
+  ForexChartState copyWith({
+    String? symbol,
+    String? timeframe,
+    AsyncValue<List<ForexRate>>? rates,
+  }) {
+    return ForexChartState(
+      symbol: symbol ?? this.symbol,
+      timeframe: timeframe ?? this.timeframe,
+      rates: rates ?? this.rates,
+    );
+  }
+}
+
+class ForexChartNotifier extends StateNotifier<ForexChartState> {
+  final ForexService _forexService;
+
+  ForexChartNotifier(this._forexService)
+      : super(ForexChartState(
+          symbol: 'EUR/USD',
+          timeframe: '1M',
+          rates: const AsyncValue.loading(),
+        )) {
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    state = state.copyWith(rates: const AsyncValue.loading());
+
+    try {
+      final now = DateTime.now();
+      DateTime startDate;
+
+      // Calculate start date based on timeframe
+      // Note: Frankfurter API provides daily reference rates.
+      switch (state.timeframe) {
+        case '1W':
+          startDate = now.subtract(const Duration(days: 7));
+          break;
+        case '1M':
+          startDate = now.subtract(const Duration(days: 30));
+          break;
+        case '3M':
+          startDate = now.subtract(const Duration(days: 90));
+          break;
+        case '1Y':
+          startDate = now.subtract(const Duration(days: 365));
+          break;
+        case '1D':
+        default:
+          // For 1D, we might want intraday data which Frankfurter doesn't provide for free.
+          // We'll fallback to 1 week of data to show some trend or just last few days.
+          startDate = now.subtract(const Duration(days: 7));
+          break;
+      }
+
+      final rates = await _forexService.fetchHistoricalRates(
+        currency: state.symbol,
+        startDate: startDate,
+        endDate: now,
+      );
+
+      state = state.copyWith(rates: AsyncValue.data(rates));
+    } catch (e, st) {
+      state = state.copyWith(rates: AsyncValue.error(e, st));
+    }
+  }
+
+  void setSymbol(String symbol) {
+    if (state.symbol == symbol) return;
+    state = state.copyWith(symbol: symbol);
+    fetchData();
+  }
+
+  void setTimeframe(String timeframe) {
+    if (state.timeframe == timeframe) return;
+    state = state.copyWith(timeframe: timeframe);
+    fetchData();
+  }
+
+  void refresh() {
+    fetchData();
+  }
+}
+
+final forexChartProvider = StateNotifierProvider<ForexChartNotifier, ForexChartState>((ref) {
+  final forexService = ref.watch(forexServiceProvider);
+  return ForexChartNotifier(forexService);
+});

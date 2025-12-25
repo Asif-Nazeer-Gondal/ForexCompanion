@@ -1,14 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import '../../../../core/utils/app_logger.dart';
 
 class JarvisService {
-  final FirebaseFirestore _firestore;
   GenerativeModel? _model;
   ChatSession? _chat;
-
-  JarvisService({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
 
   /// Initializes the Gemini model
   Future<void> initialize() async {

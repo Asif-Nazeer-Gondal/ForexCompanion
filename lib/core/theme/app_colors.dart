@@ -79,7 +79,7 @@ class AppColors {
   // ============================================
   // GLASSMORPHISM
   // ============================================
-  static Color glassLight = Colors.white.withOpacity(0.7);
+  static Color glassLight = const Color.fromRGBO(255, 255, 255, 0.7);
   static Color glassDark = Colors.black.withOpacity(0.3);
   static Color glassBlur = Colors.white.withOpacity(0.1);
 

@@ -23,7 +23,7 @@ class ForexRepositoryImpl implements ForexRepository {
     // Check network connectivity first
     if (!await _networkInfo.isConnected) {
       AppLogger.warning('No internet connection');
-      return const Left(NetworkFailure('No internet connection'));
+      return const Left(NetworkFailure(message: 'No internet connection'));
     }
 
     try {
@@ -33,13 +33,13 @@ class ForexRepositoryImpl implements ForexRepository {
       return Right(rates);
     } on NetworkException catch (e) {
       AppLogger.error('Network error while fetching rates', e);
-      return Left(NetworkFailure(e.message));
+      return Left(NetworkFailure(message: e.message));
     } on ServerException catch (e) {
       AppLogger.error('Server error while fetching rates', e);
-      return Left(ServerFailure(e.message));
+      return Left(ServerFailure(message: e.message));
     } catch (e, stackTrace) {
       AppLogger.error('Unexpected error fetching rates', e, stackTrace);
-      return Left(ForexApiFailure('Failed to fetch rates: ${e.toString()}'));
+      return Left(ForexApiFailure(message: 'Failed to fetch rates: ${e.toString()}'));
     }
   }
 
@@ -49,7 +49,7 @@ class ForexRepositoryImpl implements ForexRepository {
     required String toCurrency,
   }) async {
     if (!await _networkInfo.isConnected) {
-      return const Left(NetworkFailure('No internet connection'));
+      return const Left(NetworkFailure(message: 'No internet connection'));
     }
 
     try {
@@ -60,11 +60,11 @@ class ForexRepositoryImpl implements ForexRepository {
       );
       return Right(rate);
     } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
+      return Left(NetworkFailure(message: e.message));
     } on ServerException catch (e) {
-      return Left(ServerFailure(e.message));
+      return Left(ServerFailure(message: e.message));
     } catch (e) {
-      return Left(ForexApiFailure(e.toString()));
+      return Left(ForexApiFailure(message: e.toString()));
     }
   }
 
@@ -75,7 +75,7 @@ class ForexRepositoryImpl implements ForexRepository {
     required DateTime endDate,
   }) async {
     if (!await _networkInfo.isConnected) {
-      return const Left(NetworkFailure('No internet connection'));
+      return const Left(NetworkFailure(message: 'No internet connection'));
     }
 
     try {
@@ -86,11 +86,11 @@ class ForexRepositoryImpl implements ForexRepository {
       );
       return Right(rates);
     } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
+      return Left(NetworkFailure(message: e.message));
     } on ServerException catch (e) {
-      return Left(ServerFailure(e.message));
+      return Left(ServerFailure(message: e.message));
     } catch (e) {
-      return Left(ForexApiFailure(e.toString()));
+      return Left(ForexApiFailure(message: e.toString()));
     }
   }
 }

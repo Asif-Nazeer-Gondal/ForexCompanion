@@ -1,7 +1,9 @@
 // lib/features/agents/presentation/agent_dashboard_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:forexcompanion/state/providers/agent_provider.dart';
+import 'package:forexcompanion/core/utils/app_logger.dart';
 
 class AgentDashboardScreen extends ConsumerWidget {
   const AgentDashboardScreen({super.key});
@@ -13,6 +15,12 @@ class AgentDashboardScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Agent Dashboard'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () => context.push('/settings'),
+          ),
+        ],
       ),
       body: agentsAsyncValue.when(
         data: (agents) {
@@ -38,7 +46,7 @@ class AgentDashboardScreen extends ConsumerWidget {
                           ElevatedButton(
                             onPressed: () {
                               // TODO: Implement start agent logic (e.g., call backend API)
-                              print('Start ${agent.id}');
+                              AppLogger.info('Starting agent: ${agent.id}');
                               ref.read(agentProvider.notifier).updateAgentStatus(agent.id, 'active');
                             },
                             child: const Text('Start'),
@@ -47,7 +55,7 @@ class AgentDashboardScreen extends ConsumerWidget {
                           ElevatedButton(
                             onPressed: () {
                               // TODO: Implement stop agent logic (e.g., call backend API)
-                              print('Stop ${agent.id}');
+                              AppLogger.info('Stopping agent: ${agent.id}');
                               ref.read(agentProvider.notifier).updateAgentStatus(agent.id, 'inactive');
                             },
                             child: const Text('Stop'),
@@ -67,7 +75,9 @@ class AgentDashboardScreen extends ConsumerWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // TODO: Implement Agent creation wizard navigation
-          print('Navigate to Agent Creation Wizard');
+          AppLogger.info('Navigate to Agent Creation Wizard');
+          // Example navigation:
+          // Navigator.of(context).pushNamed('/agent-creation');
         },
         child: const Icon(Icons.add),
       ),

@@ -1,18 +1,18 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+// lib/features/forex/domain/models/forex_rate.dart
+class ForexRate {
+  final String baseCurrency;
+  final String quoteCurrency;
+  final double rate;
+  final DateTime timestamp;
+  final double? change;
+  final double? changePercent;
 
-part 'forex_rate.freezed.dart';
-part 'forex_rate.g.dart';
-
-@freezed
-class ForexRate with _$ForexRate {
-  const factory ForexRate({
-    required String baseCurrency,
-    required String quoteCurrency,
-    double? bid,
-    double? ask,
-    required double rate,
-    required DateTime timestamp,
-  }) = _ForexRate;
-
-  factory ForexRate.fromJson(Map<String, dynamic> json) => _$ForexRateFromJson(json);
+  const ForexRate({
+    required this.baseCurrency,
+    required this.quoteCurrency,
+    required this.rate,
+    required this.timestamp,
+    this.change,
+    this.changePercent,
+  });
 }

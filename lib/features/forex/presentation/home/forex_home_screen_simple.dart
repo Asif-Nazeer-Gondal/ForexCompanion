@@ -46,7 +46,7 @@ class ForexHomeScreen extends ConsumerWidget {
                     leading: CircleAvatar(
                       backgroundColor: Theme.of(context).colorScheme.primary,
                       child: Text(
-                        rate.to,
+                        rate.quoteCurrency,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 12,
@@ -55,7 +55,7 @@ class ForexHomeScreen extends ConsumerWidget {
                       ),
                     ),
                     title: Text(
-                      '${rate.from}/${rate.to}',
+                      '${rate.baseCurrency}/${rate.quoteCurrency}',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
@@ -77,7 +77,7 @@ class ForexHomeScreen extends ConsumerWidget {
                           ),
                         ),
                         Text(
-                          '1 ${rate.from}',
+                          '1 ${rate.baseCurrency}',
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.grey[600],

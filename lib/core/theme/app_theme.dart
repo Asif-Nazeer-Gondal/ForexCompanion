@@ -41,23 +41,7 @@ class AppTheme {
         ),
       ),
 
-      // Card
-      // Elevated Button
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryNavy,
-          foregroundColor: Colors.white,
-          elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          textStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
+
 
       // Text Button
       textButtonTheme: TextButtonThemeData(
@@ -144,12 +128,14 @@ class AppTheme {
       ),
 
       // Card
-      cardTheme: CardTheme( // This should be CardThemeData not CardTheme
+      cardTheme: CardTheme(
         elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
       ),
+    );
+  }
 
   // Dark Theme
   static ThemeData get darkTheme {
@@ -278,8 +264,8 @@ class AppTheme {
           fontWeight: FontWeight.w500,
         ),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
         ),
       ),
 
@@ -291,7 +277,7 @@ class AppTheme {
       ),
 
       // Icon Theme
-      iconTheme: IconThemeData(
+      iconTheme: const IconThemeData(
         color: AppColors.darkTextSecondary,
         size: 24,
       ),
