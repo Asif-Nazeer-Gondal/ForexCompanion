@@ -1,0 +1,13 @@
+# infrastructure/docker/Dockerfile.frontend
+# Dockerfile for the frontend Flutter application.
+# For now, it's a placeholder.
+FROM cirrusci/flutter:stable
+
+WORKDIR /app
+
+COPY . .
+
+RUN flutter pub get
+RUN flutter build web
+
+CMD ["/usr/bin/caddy", "file-server", "--root", "build/web"]

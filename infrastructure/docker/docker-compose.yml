@@ -1,0 +1,26 @@
+# infrastructure/docker/docker-compose.yml
+# Docker Compose configuration for local development.
+# For now, it's a placeholder.
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ../../backend_python
+      dockerfile: ../infrastructure/docker/Dockerfile.backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../../backend_python:/app
+
+  frontend:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile.frontend
+    ports:
+      - "80:80"
+    volumes:
+      - ../../lib:/app/lib
+      - ../../pubspec.yaml:/app/pubspec.yaml
+      - ../../pubspec.lock:/app/pubspec.lock
+      - ../../assets:/app/assets

@@ -1,0 +1,22 @@
+# infrastructure/kubernetes/frontend-deployment.yaml
+# Kubernetes deployment for the frontend.
+# For now, it's a placeholder.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: your-repo/frontend:latest
+        ports:
+        - containerPort: 80

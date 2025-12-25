@@ -1,0 +1,5 @@
+# backend_python/config/environments/staging.yaml
+# Staging environment configuration
+database_url: "postgresql://user:password@staging-db/db"
+api_key: "staging_api_key"
+debug_mode: false

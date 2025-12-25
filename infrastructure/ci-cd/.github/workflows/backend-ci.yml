@@ -1,0 +1,28 @@
+# infrastructure/ci-cd/.github/workflows/backend-ci.yml
+# GitHub Actions workflow for backend CI.
+# For now, it's a placeholder.
+name: Backend CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend_python/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    - name: Install dependencies
+      run: |
+        pip install poetry
+        poetry install --no-root
+    - name: Run tests
+      run: |
+        poetry run pytest

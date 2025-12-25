@@ -1,0 +1,5 @@
+# backend_python/config/environments/development.yaml
+# Development environment configuration
+database_url: "sqlite:///./dev.db"
+api_key: "dev_api_key"
+debug_mode: true

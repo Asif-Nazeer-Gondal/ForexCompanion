@@ -1,0 +1,5 @@
+# backend_python/config/environments/production.yaml
+# Production environment configuration
+database_url: "postgresql://user:password@prod-db/db"
+api_key: "prod_api_key"
+debug_mode: false
