@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import '../domain/services/risk_calculator_service.dart';
 
-class RiskCalculatorScreen extends StatefulWidget {
-  const RiskCalculatorScreen({super.key});
+class PositionSizeCalculatorScreen extends StatefulWidget {
+  const PositionSizeCalculatorScreen({super.key});
 
   @override
-  State<RiskCalculatorScreen> createState() => _RiskCalculatorScreenState();
+  State<PositionSizeCalculatorScreen> createState() => _PositionSizeCalculatorScreenState();
 }
 
-class _RiskCalculatorScreenState extends State<RiskCalculatorScreen> {
+class _PositionSizeCalculatorScreenState extends State<PositionSizeCalculatorScreen> {
   final TextEditingController _balanceController = TextEditingController();
   final TextEditingController _riskController = TextEditingController();
   final TextEditingController _stopLossController = TextEditingController();
@@ -16,12 +16,28 @@ class _RiskCalculatorScreenState extends State<RiskCalculatorScreen> {
   final RiskCalculatorService _service = RiskCalculatorService();
   RiskCalculationResult? _result;
 
+  // Default to EUR/USD
+  String _selectedPair = 'EUR/USD';
+
+  // Mock pip values for demonstration (Standard Lot $100k)
+  // In a real app, these would be dynamic based on current exchange rates
+  final Map<String, double> _pipValues = {
+    'EUR/USD': 10.0,
+    'GBP/USD': 10.0,
+    'AUD/USD': 10.0,
+    'NZD/USD': 10.0,
+    'USD/JPY': 9.09, // Approx 1000 JPY / 110.00
+    'USD/CAD': 7.40, // Approx 10 CAD / 1.35
+    'USD/CHF': 10.86, // Approx 10 CHF / 0.92
+    'EUR/GBP': 12.80, // Approx 10 GBP / 0.78
+  };
+
   @override
   void initState() {
     super.initState();
     _balanceController.text = '10000';
     _riskController.text = '1.0';
-    _stopLossController.text = '50';
+    _stopLossController.text = '20';
     _calculate();
   }
 
@@ -29,12 +45,14 @@ class _RiskCalculatorScreenState extends State<RiskCalculatorScreen> {
     final balance = double.tryParse(_balanceController.text) ?? 0.0;
     final risk = double.tryParse(_riskController.text) ?? 0.0;
     final stopLoss = double.tryParse(_stopLossController.text) ?? 0.0;
+    final pipValue = _pipValues[_selectedPair] ?? 10.0;
 
     setState(() {
       _result = _service.calculateRisk(
         accountBalance: balance,
         riskPercentage: risk,
         stopLossPips: stopLoss,
+        pipValue: pipValue,
       );
     });
   }
@@ -51,7 +69,7 @@ class _RiskCalculatorScreenState extends State<RiskCalculatorScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Risk Calculator'),
+        title: const Text('Position Size Calculator'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -63,6 +81,28 @@ class _RiskCalculatorScreenState extends State<RiskCalculatorScreen> {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
+                    DropdownButtonFormField<String>(
+                      value: _selectedPair,
+                      decoration: const InputDecoration(
+                        labelText: 'Currency Pair',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: _pipValues.keys.map((String pair) {
+                        return DropdownMenuItem<String>(
+                          value: pair,
+                          child: Text(pair),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        if (newValue != null) {
+                          setState(() {
+                            _selectedPair = newValue;
+                            _calculate();
+                          });
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 16),
                     TextField(
                       controller: _balanceController,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -109,19 +149,11 @@ class _RiskCalculatorScreenState extends State<RiskCalculatorScreen> {
             const SizedBox(height: 24),
             if (_result != null) ...[
               Text(
-                'Results',
+                'Recommended Position',
                 style: Theme.of(context).textTheme.titleMedium,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
-              _buildResultCard(
-                context,
-                'Amount at Risk',
-                '\$${_result!.riskAmount.toStringAsFixed(2)}',
-                Colors.red.shade100,
-                Colors.red.shade900,
-              ),
-              const SizedBox(height: 12),
               Row(
                 children: [
                   Expanded(
@@ -129,14 +161,16 @@ class _RiskCalculatorScreenState extends State<RiskCalculatorScreen> {
                       context,
                       'Standard Lots',
                       _result!.standardLots.toStringAsFixed(2),
+                      Colors.blue.shade100,
+                      Colors.blue.shade900,
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: _buildResultCard(
                       context,
-                      'Mini Lots',
-                      _result!.miniLots.toStringAsFixed(2),
+                      'Units',
+                      _result!.positionSizeUnits.toStringAsFixed(0),
                     ),
                   ),
                 ],
@@ -144,8 +178,10 @@ class _RiskCalculatorScreenState extends State<RiskCalculatorScreen> {
               const SizedBox(height: 12),
               _buildResultCard(
                 context,
-                'Micro Lots',
-                _result!.microLots.toStringAsFixed(2),
+                'Risk Amount',
+                '\$${_result!.riskAmount.toStringAsFixed(2)}',
+                Colors.red.shade100,
+                Colors.red.shade900,
               ),
             ],
           ],

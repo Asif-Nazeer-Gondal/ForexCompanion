@@ -73,4 +73,31 @@ class NotificationService {
       payload: payload,
     );
   }
+
+  /// Show a price alert notification
+  Future<void> showPriceAlert({
+    required String symbol,
+    required double price,
+    required String condition,
+  }) async {
+    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      'price_alerts_channel',
+      'Price Alerts',
+      channelDescription: 'Notifications when price targets are hit',
+      importance: Importance.high,
+      priority: Priority.high,
+    );
+
+    const NotificationDetails platformDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: DarwinNotificationDetails(),
+    );
+
+    await _flutterLocalNotificationsPlugin.show(
+      DateTime.now().millisecond,
+      'Price Alert: $symbol',
+      '$symbol is now $condition $price',
+      platformDetails,
+    );
+  }
 }

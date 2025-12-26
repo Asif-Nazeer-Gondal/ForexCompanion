@@ -14,6 +14,7 @@ import '../../features/trading/presentation/trade_execution_screen.dart';
 import '../../features/trading/presentation/trade_history_screen.dart';
 import '../../features/portfolio/presentation/portfolio_screen.dart';
 import '../../features/tools/presentation/risk_calculator_screen.dart';
+import '../../features/tools/presentation/currency_converter_screen.dart';
 import '../../features/learning/presentation/learning_hub_screen.dart';
 import '../../features/backtesting/presentation/backtesting_screen.dart';
 import '../../features/jarvis/presentation/chat_screen.dart';
