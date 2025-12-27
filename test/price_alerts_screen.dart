@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 import '../domain/models/price_alert.dart';
 import 'providers/price_alerts_provider.dart';
 import '../../../core/services/background_service.dart';
@@ -51,6 +52,13 @@ class _PriceAlertsScreenState extends ConsumerState<PriceAlertsScreen> {
 
   Future<void> _toggleAlert(String id) async {
     ref.read(priceAlertsProvider.notifier).toggleAlert(id);
+  }
+
+  void _shareAlert(PriceAlert alert) {
+    final condition =
+        alert.condition == AlertCondition.above ? 'above' : 'below';
+    Share.share(
+        'Forex Alert: ${alert.symbol} target $condition ${alert.targetPrice}');
   }
 
   Future<void> _configureBackgroundMonitoring() async {
@@ -237,20 +245,6 @@ class _PriceAlertsScreenState extends ConsumerState<PriceAlertsScreen> {
                   itemCount: filteredAlerts.length,
                   itemBuilder: (context, index) {
                     final alert = filteredAlerts[index];
-                    return Card(
-                      child: ListTile(
-                        onTap: () => _editAlert(alert),
-                        leading: CircleAvatar(
-                          backgroundColor: alert.isActive
-                              ? Theme.of(context).primaryColor.withOpacity(0.1)
-                              : Colors.grey.shade200,
-                          child: Icon(
-                            alert.condition == AlertCondition.above
-                                ? Icons.trending_up
-                                : Icons.trending_down,
-                            color: alert.isActive
-                                ? Theme.of(context).primaryColor
-                                : Colors.grey,
                     return Dismissible(
                       key: Key(alert.id),
                       direction: DismissDirection.endToStart,
@@ -260,6 +254,28 @@ class _PriceAlertsScreenState extends ConsumerState<PriceAlertsScreen> {
                         color: Colors.red,
                         child: const Icon(Icons.delete, color: Colors.white),
                       ),
+                      confirmDismiss: (direction) async {
+                        return await showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text("Confirm Delete"),
+                              content: const Text(
+                                  "Are you sure you want to delete this alert?"),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(false),
+                                  child: const Text("Cancel"),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(true),
+                                  child: const Text("Delete"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
                       onDismissed: (direction) {
                         _deleteAlert(alert.id);
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -283,17 +299,6 @@ class _PriceAlertsScreenState extends ConsumerState<PriceAlertsScreen> {
                                   : Colors.grey,
                             ),
                           ),
-                        ),
-                        title: Text(
-                          alert.symbol,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: Text(
-                          '${alert.condition == AlertCondition.above ? 'Above' : 'Below'} ${alert.targetPrice.toStringAsFixed(5)}',
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
                           title: Text(
                             alert.symbol,
                             style: const TextStyle(fontWeight: FontWeight.bold),
@@ -304,6 +309,10 @@ class _PriceAlertsScreenState extends ConsumerState<PriceAlertsScreen> {
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
+                            IconButton(
+                              icon: const Icon(Icons.share),
+                              onPressed: () => _shareAlert(alert),
+                            ),
                             Switch(
                               value: alert.isActive,
                               onChanged: (_) => _toggleAlert(alert.id),

@@ -50,36 +50,9 @@ class ForexChartNotifier extends StateNotifier<ForexChartState> {
     state = state.copyWith(rates: const AsyncValue.loading());
 
     try {
-      final now = DateTime.now();
-      DateTime startDate;
-
-      // Calculate start date based on timeframe
-      // Note: Frankfurter API provides daily reference rates.
-      switch (state.timeframe) {
-        case '1W':
-          startDate = now.subtract(const Duration(days: 7));
-          break;
-        case '1M':
-          startDate = now.subtract(const Duration(days: 30));
-          break;
-        case '3M':
-          startDate = now.subtract(const Duration(days: 90));
-          break;
-        case '1Y':
-          startDate = now.subtract(const Duration(days: 365));
-          break;
-        case '1D':
-        default:
-          // For 1D, we might want intraday data which Frankfurter doesn't provide for free.
-          // We'll fallback to 1 week of data to show some trend or just last few days.
-          startDate = now.subtract(const Duration(days: 7));
-          break;
-      }
-
-      final rates = await _forexService.fetchHistoricalRates(
-        currency: state.symbol,
-        startDate: startDate,
-        endDate: now,
+      final rates = await _forexService.getHistoricalRates(
+        state.symbol,
+        state.timeframe,
       );
 
       state = state.copyWith(rates: AsyncValue.data(rates));

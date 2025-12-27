@@ -12,7 +12,7 @@ class ForexService {
   ForexService({http.Client? client}) : _client = client ?? http.Client();
 
   /// Fetches latest rates for major currencies against USD
-  Future<List<ForexRate>> fetchRates() async {
+  Future<List<ForexRate>> getLatestRates() async {
     final url = Uri.parse('$_baseUrl/latest?from=USD');
     
     try {
@@ -40,63 +40,37 @@ class ForexService {
     }
   }
 
-  /// Fetches a specific exchange rate
-  Future<ForexRate> fetchSpecificRate({
-    required String from,
-    required String to,
-  }) async {
-    if (from == to) {
-      return ForexRate(
-        baseCurrency: from,
-        quoteCurrency: to,
-        rate: 1.0,
-        timestamp: DateTime.now(),
-      );
-    }
-
-    final url = Uri.parse('$_baseUrl/latest?from=$from&to=$to');
-    
-    try {
-      final response = await _client.get(url);
-      
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final ratesMap = data['rates'] as Map<String, dynamic>;
-        
-        if (!ratesMap.containsKey(to)) {
-           throw Exception('Rate for $to not found');
-        }
-
-        final rateValue = (ratesMap[to] as num).toDouble();
-        final date = DateTime.parse(data['date']);
-        
-        return ForexRate(
-          baseCurrency: from,
-          quoteCurrency: to,
-          rate: rateValue,
-          timestamp: date,
-        );
-      } else {
-        throw Exception('Failed to load rate for $from/$to: ${response.statusCode}');
-      }
-    } catch (e) {
-      AppLogger.error('Error fetching specific rate', e);
-      rethrow;
-    }
-  }
-
   /// Fetches historical rates for a currency pair
-  Future<List<ForexRate>> fetchHistoricalRates({
-    required String currency,
-    required DateTime startDate,
-    required DateTime endDate,
-  }) async {
+  Future<List<ForexRate>> getHistoricalRates(String symbol, String period) async {
     // Currency format expected: "EUR/USD"
-    final parts = currency.replaceAll('-', '/').split('/');
+    final parts = symbol.replaceAll('-', '/').split('/');
     if (parts.length != 2) throw Exception('Invalid currency pair format');
     
     final base = parts[0];
     final quote = parts[1];
+    
+    final endDate = DateTime.now();
+    DateTime startDate;
+
+    switch (period) {
+      case '1W':
+        startDate = endDate.subtract(const Duration(days: 7));
+        break;
+      case '1M':
+        startDate = endDate.subtract(const Duration(days: 30));
+        break;
+      case '3M':
+        startDate = endDate.subtract(const Duration(days: 90));
+        break;
+      case '1Y':
+        startDate = endDate.subtract(const Duration(days: 365));
+        break;
+      case '1D':
+      default:
+        startDate = endDate.subtract(const Duration(days: 5)); 
+        break;
+    }
+
     final startStr = DateFormat('yyyy-MM-dd').format(startDate);
     final endStr = DateFormat('yyyy-MM-dd').format(endDate);
 
@@ -108,9 +82,20 @@ class ForexService {
         final data = json.decode(response.body);
         final ratesMap = data['rates'] as Map<String, dynamic>;
         
-        return ratesMap.entries.map((e) => ForexRate(
-          baseCurrency: base, quoteCurrency: quote, rate: (e.value[quote] as num).toDouble(), timestamp: DateTime.parse(e.key)
-        )).toList()..sort((a, b) => a.timestamp.compareTo(b.timestamp));
+        List<ForexRate> rates = [];
+        ratesMap.forEach((dateStr, rateData) {
+           if (rateData is Map && rateData.containsKey(quote)) {
+             rates.add(ForexRate(
+               baseCurrency: base,
+               quoteCurrency: quote,
+               rate: (rateData[quote] as num).toDouble(),
+               timestamp: DateTime.parse(dateStr),
+             ));
+           }
+        });
+        
+        rates.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+        return rates;
       } else throw Exception('Failed to load historical rates');
     } catch (e) { AppLogger.error('Error fetching historical rates', e); rethrow; }
   }

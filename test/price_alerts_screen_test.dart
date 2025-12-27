@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:forex_companion/core/services/notification_service.dart';
@@ -245,6 +246,86 @@ void main() {
       // Verify all alerts visible again
       expect(find.text('EUR/USD'), findsOneWidget);
       expect(find.text('GBP/USD'), findsOneWidget);
+    });
+
+    testWidgets('shows confirmation dialog on swipe to delete', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            priceAlertsProvider.overrideWith((ref) => PriceAlertsNotifier(
+                  mockPriceAlertsService,
+                  mockWebSocketService,
+                  mockNotificationService,
+                )),
+          ],
+          child: const MaterialApp(home: PriceAlertsScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Find the first dismissible widget (EUR/USD)
+      final dismissibleFinder = find.byType(Dismissible).first;
+
+      // Swipe left to trigger deletion
+      await tester.drag(dismissibleFinder, const Offset(-500.0, 0.0));
+      await tester.pumpAndSettle();
+
+      // Verify confirmation dialog appears
+      expect(find.text('Confirm Delete'), findsOneWidget);
+
+      // Tap Cancel
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+
+      // Verify alert is still present
+      expect(find.text('EUR/USD'), findsOneWidget);
+
+      // Swipe again
+      await tester.drag(dismissibleFinder, const Offset(-500.0, 0.0));
+      await tester.pumpAndSettle();
+
+      // Tap Delete
+      await tester.tap(find.text('Delete'));
+      await tester.pumpAndSettle();
+
+      // Verify alert is removed
+      expect(find.text('EUR/USD'), findsNothing);
+    });
+
+    testWidgets('shares alert details', (WidgetTester tester) async {
+      const MethodChannel channel =
+          MethodChannel('dev.fluttercommunity.plus/share/share');
+      final List<MethodCall> log = <MethodCall>[];
+
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        channel,
+        (MethodCall methodCall) async {
+          log.add(methodCall);
+          return null;
+        },
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            priceAlertsProvider.overrideWith((ref) => PriceAlertsNotifier(
+                  mockPriceAlertsService,
+                  mockWebSocketService,
+                  mockNotificationService,
+                )),
+          ],
+          child: const MaterialApp(home: PriceAlertsScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.share).first);
+      await tester.pump();
+
+      expect(log, hasLength(1));
+      expect(log.first.method, 'share');
+      expect(log.first.arguments['text'],
+          'Forex Alert: EUR/USD target above 1.1');
     });
   });
 }

@@ -1,26 +1,36 @@
-# infrastructure/docker/docker-compose.yml
-# Docker Compose configuration for local development.
-# For now, it's a placeholder.
 version: '3.8'
 
 services:
   backend:
     build:
-      context: ../../backend_python
-      dockerfile: ../infrastructure/docker/Dockerfile.backend
+      context: ../../backend_brain
+      dockerfile: Dockerfile
+    container_name: forex_brain
     ports:
       - "8000:8000"
     volumes:
-      - ../../backend_python:/app
+      - ../../backend_brain:/app
+    env_file:
+      - ../../backend_brain/.env
+    environment:
+      # Override localhost with the db service name for Docker networking
+      - DATABASE_URL=postgresql+asyncpg://user:password@db:5432/forex_db
+    depends_on:
+      - db
+    restart: unless-stopped
 
-  frontend:
-    build:
-      context: ../..
-      dockerfile: infrastructure/docker/Dockerfile.frontend
-    ports:
-      - "80:80"
+  db:
+    image: postgres:15-alpine
+    container_name: forex_db
     volumes:
-      - ../../lib:/app/lib
-      - ../../pubspec.yaml:/app/pubspec.yaml
-      - ../../pubspec.lock:/app/pubspec.lock
-      - ../../assets:/app/assets
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=forex_db
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
