@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:forex_companion/state/providers/glossary_screen.dart';
+import 'package:forex_companion/features/forex/presentation/glossary_screen.dart';
 
 void main() {
   testWidgets('GlossaryScreen displays terms and expands definitions', (WidgetTester tester) async {
     // Build the GlossaryScreen widget
-    await tester.pumpWidget(const MaterialApp(home: GlossaryScreen()));
+    await tester.pumpWidget(
+      const ProviderScope(
+        child: MaterialApp(home: GlossaryScreen()),
+      ),
+    );
+
+    // Wait for data to load
+    await tester.pumpAndSettle();
 
     // Verify the title is displayed
     expect(find.text('Forex Glossary'), findsOneWidget);
@@ -46,5 +54,48 @@ void main() {
     
     // Verify definition is visible
     expect(spreadDefFinder, findsOneWidget);
+
+    // --- Test Search Functionality ---
+    
+    // Enter 'Pip' into the search field
+    await tester.enterText(find.byType(TextField), 'Pip');
+    await tester.pumpAndSettle();
+
+    // Verify 'Pip' is visible
+    expect(find.text('Pip'), findsOneWidget);
+    
+    // Verify 'Ask Price' is NOT visible (filtered out)
+    expect(find.text('Ask Price'), findsNothing);
+
+    // Clear search using the clear button
+    await tester.tap(find.byIcon(Icons.clear));
+    await tester.pumpAndSettle();
+
+    // Verify 'Ask Price' is visible again
+    expect(find.text('Ask Price'), findsOneWidget);
+
+    // --- Test Favorites Functionality ---
+
+    // Find the favorite button for 'Ask Price' (it's the leading widget)
+    // Since there are multiple favorite borders, we find the one associated with the tile
+    // However, simply finding by icon is easier if we assume order or uniqueness in test context
+    final favoriteButtonFinder = find.widgetWithIcon(IconButton, Icons.favorite_border).first;
+    
+    // Tap to favorite 'Ask Price' (which is sorted first)
+    await tester.tap(favoriteButtonFinder);
+    await tester.pumpAndSettle();
+
+    // Verify icon changed to filled favorite
+    expect(find.widgetWithIcon(IconButton, Icons.favorite), findsOneWidget);
+
+    // Toggle "Show Favorites Only" in AppBar
+    await tester.tap(find.widgetWithIcon(IconButton, Icons.favorite_border).last); // The action button
+    await tester.pumpAndSettle();
+
+    // Verify 'Ask Price' (favorite) is visible
+    expect(find.text('Ask Price'), findsOneWidget);
+
+    // Verify 'Spread' (not favorite) is hidden
+    expect(find.text('Spread'), findsNothing);
   });
 }

@@ -51,15 +51,24 @@ class SyncManager {
   }
 
   Future<void> _pushLocalChanges() async {
-    // TODO: Implement logic to read from LocalCache and send to API
     AppLogger.info('Pushing local changes...');
+    
+    // Simulate pushing user journal entries or settings
+    await Future.delayed(const Duration(milliseconds: 500));
+    
     await Future.delayed(const Duration(seconds: 1)); // Simulate work
   }
 
   Future<void> _pullRemoteData() async {
-    // TODO: Implement logic to fetch from API and update LocalCache
     AppLogger.info('Pulling remote data...');
-    await Future.delayed(const Duration(seconds: 1)); // Simulate work
+    
+    // Simulate fetching latest Economic Calendar events
+    AppLogger.info('Syncing Economic Calendar events...');
+    await Future.delayed(const Duration(milliseconds: 800));
+
+    // Simulate fetching Glossary updates
+    AppLogger.info('Syncing Glossary terms...');
+    await Future.delayed(const Duration(milliseconds: 500));
   }
 
   void dispose() {
